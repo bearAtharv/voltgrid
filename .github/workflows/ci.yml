@@ -24,20 +24,16 @@ jobs:
         run: npm install
 
       - name: Typecheck & Build Server
-        run: |
-          cd server
-          npx tsc
+        run: npm run build --workspace=server
 
       - name: Run Automated Unit & Security Tests
-        run: |
-          cd server
-          npm test
+        run: npm run test --workspace=server
 
-      - name: Typecheck & Build Client
-        run: |
-          cd client
-          npx tsc --noEmit
-          npx vite build
+      - name: Typecheck Client
+        run: npm run typecheck --workspace=client
+
+      - name: Build Client Bundle
+        run: npm run build --workspace=client
 
   docker-build-check:
     name: Docker Container Compilation & Health
