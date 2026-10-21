@@ -1,0 +1,68 @@
+services:
+  # ============================================================================
+  # 1. PostgreSQL 16 Database Engine
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: voltgrid-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: voltgrid_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./database/02_triggers.sql:/docker-entrypoint-initdb.d/02_triggers.sql
+      - ./database/03_stored_procedures.sql:/docker-entrypoint-initdb.d/03_stored_procedures.sql
+      - ./database/04_analytical_queries.sql:/docker-entrypoint-initdb.d/04_analytical_queries.sql
+      - ./database/05_seed_data.sql:/docker-entrypoint-initdb.d/05_seed_data.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d voltgrid_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # 2. Express Backend API & Real-Time Gateway
+  # ============================================================================
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: voltgrid-server
+    restart: always
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: voltgrid_db
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+      JWT_SECRET: super_secret_voltgrid_jwt_key_2026_change_in_prod
+      CLIENT_URL: http://localhost:5173
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ============================================================================
+  # 3. React Vite Frontend Client
+  # ============================================================================
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: voltgrid-client
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
