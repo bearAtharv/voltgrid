@@ -20,22 +20,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Verify Server TypeScript Compilation
-        run: |
-          cd server
-          npm install
-          npx tsc --noEmit
+      - name: Install Workspace Dependencies
+        run: npm install
+
+      - name: Verify TypeScript & Production Build
+        run: npm run build
 
       - name: Run Automated Unit & Security Tests
-        run: |
-          cd server
-          npm test
-
-      - name: Verify Client TypeScript Compilation & Production Build
-        run: |
-          cd client
-          npm install
-          npm run build
+        run: npm test
 
   docker-build-check:
     name: Docker Container Compilation & Health
