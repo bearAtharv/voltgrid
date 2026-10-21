@@ -23,11 +23,21 @@ jobs:
       - name: Install Workspace Dependencies
         run: npm install
 
-      - name: Verify TypeScript & Production Build
-        run: npm run build
+      - name: Typecheck & Build Server
+        run: |
+          cd server
+          npx tsc
 
       - name: Run Automated Unit & Security Tests
-        run: npm test
+        run: |
+          cd server
+          npm test
+
+      - name: Typecheck & Build Client
+        run: |
+          cd client
+          npx tsc --noEmit
+          npx vite build
 
   docker-build-check:
     name: Docker Container Compilation & Health
