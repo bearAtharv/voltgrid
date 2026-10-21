@@ -1,21 +1,16 @@
 import { io, Socket } from 'socket.io-client';
 
-// Determine backend URL dynamically based on current origin/ports
+// Determine backend URL dynamically based on current origin/host
 const getApiBase = () => {
   if (typeof window !== 'undefined') {
-    if (window.location.port === '5173' || window.location.port === '3000') {
-      return `http://${window.location.hostname}:5000/api`;
-    }
+    return `http://${window.location.hostname}:5000/api`;
   }
   return '/api';
 };
 
 const getSocketBase = () => {
   if (typeof window !== 'undefined') {
-    if (window.location.port === '5173' || window.location.port === '3000') {
-      return `http://${window.location.hostname}:5000`;
-    }
-    return window.location.origin;
+    return `http://${window.location.hostname}:5000`;
   }
   return 'http://localhost:5000';
 };
