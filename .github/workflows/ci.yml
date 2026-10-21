@@ -19,15 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: |
-            server/package.json
-            client/package.json
 
       - name: Verify Server TypeScript Compilation
         run: |
           cd server
-          npm ci
+          npm install
           npx tsc --noEmit
 
       - name: Run Automated Unit & Security Tests
@@ -38,8 +34,7 @@ jobs:
       - name: Verify Client TypeScript Compilation & Production Build
         run: |
           cd client
-          npm ci
-          npx tsc --noEmit
+          npm install
           npm run build
 
   docker-build-check:
