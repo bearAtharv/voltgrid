@@ -93,16 +93,9 @@ ssh -i voltgrid-key.pem ubuntu@<YOUR-EC2-PUBLIC-IP>
 Inside your EC2 terminal, run these 4 commands:
 
 ```bash
-# 1. Clone your GitHub repository
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/voltgrid.git
-
-# 2. Enter project folder
+git clone https://github.com/saranxzi/voltgrid.git
 cd voltgrid
-
-# 3. Make deploy script executable
 chmod +x deploy-ec2.sh
-
-# 4. Run automated cloud setup
 ./deploy-ec2.sh
 ```
 
